@@ -12,7 +12,6 @@ stemmer = LancasterStemmer()
 with open("intents.json") as file:
     data = json.load(file)
 
-
 try:
     with open("data.pickle", "rb") as f:
         words, labels, training, output = pickle.load(f)
@@ -65,6 +64,7 @@ except:
     with open("data.pickle", "wb") as f:
         pickle.dump((words, labels, training, output), f)
 
+
 tf.compat.v1.reset_default_graph()
 
 net = tflearn.input_data(shape=[None, len(training[0])])
@@ -78,7 +78,7 @@ model = tflearn.DNN(net)
 try:
     model.load("model.tflearn")
 except:
-    model.fit(training, output, n_epoch=1000, batch_size=8, show_metric=True)
+    model.fit(training, output, n_epoch=1500, batch_size=8, show_metric=True)
     model.save("model.tflearn")
 
 
@@ -96,11 +96,9 @@ def bag_of_words(s, words):
 
 
 def chat():
-    print("Start talking with the bot! (type quit to stop)")
+    print("Start talking with Elaina!")
     while True:
-        inp = input("You : ")
-        if inp.lower() == "quit":
-            break
+        inp = input("> ")
 
         results = model.predict([bag_of_words(inp, words)])
         results_index = numpy.argmax(results)
@@ -110,7 +108,11 @@ def chat():
             if tg['tag'] == tag:
                 responses = tg['responses']
 
-        print(random.choice(responses))
+        if tag == 'goodbye':
+            print(random.choice(responses))
+            break
+        else:
+            print(random.choice(responses))
 
 
 chat()

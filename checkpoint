@@ -1,2 +1,2 @@
-model_checkpoint_path: "c:\\Users\\pados\\OneDrive\\\353\260\224\355\203\225 \355\231\224\353\251\264\\chatbot\\model.tflearn"
-all_model_checkpoint_paths: "c:\\Users\\pados\\OneDrive\\\353\260\224\355\203\225 \355\231\224\353\251\264\\chatbot\\model.tflearn"
+model_checkpoint_path: "C:\\Users\\pados\\elaina1.0\\model.tflearn"
+all_model_checkpoint_paths: "C:\\Users\\pados\\elaina1.0\\model.tflearn"
