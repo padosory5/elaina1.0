@@ -75,6 +75,19 @@
                 "for food, I enjoy drinking coffee :)"
             ],
             "context_set": ""
+        },
+        {
+            "tag": "time",
+            "patterns": [
+                "what time is it?",
+                "time",
+                "Tell me the time",
+                "whats the time?"
+            ],
+            "responses": [
+                ""
+            ],
+            "context_set": ""
         }
     ]
 }
