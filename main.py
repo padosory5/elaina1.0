@@ -180,25 +180,13 @@ def chat():
             speak(random.choice(responses))
             break
         elif tag == 'time':
-            speak("현재 시간은" + ctime() + "입니다")
+            speak("현재 시간은" + ctime() + "입니다!")
         elif tag == 'search':
             url = 'https://google.com/search?q=' + voice_data
             webbrowser.get().open(url)
             speak(random.choice(responses))
         else:
             speak(random.choice(responses))
-
-
-'''
-def speak(audio_string):
-    tts = gTTS(text=audio_string, lang='ko')
-    r = random.randint(1, 10000000)
-    audio_file = 'audio-' + str(r) + '.mp3'
-    tts.save(audio_file)
-    playsound.playsound(audio_file)
-    print(audio_string)
-    os.remove(audio_file)
-'''
 
 
 def record_audio():
@@ -215,7 +203,7 @@ def record_audio():
 
 def speak(audio_string):
     encText = urllib.parse.quote(audio_string)
-    data = "speaker=nara&volume=0&speed=0&pitch=0&format=mp3&text=" + encText
+    data = "speaker=nbora&volume=0&speed=0&pitch=1&format=mp3&text=" + encText
     url = "https://naveropenapi.apigw.ntruss.com/tts-premium/v1/tts"
     request = urllib.request.Request(url)
     request.add_header("X-NCP-APIGW-API-KEY-ID", client_id)
