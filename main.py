@@ -19,14 +19,12 @@ client_id = "6er9p07etq"
 client_secret = "VNMRk9SsZzUOZc9S34ryUNxcs73Fqy4PKRP7wyP1"
 
 
-r = sr.Recognizer()
-
 stemmer = LancasterStemmer()
 
 
 with open("intents.json", 'r', encoding='UTF-8', errors='ignore') as file:
     data = json.load(file)
-
+'''
 try:
     with open("data.pickle", "rb") as f:
         words, labels, training, output = pickle.load(f)
@@ -78,21 +76,72 @@ except:
 
     with open("data.pickle", "wb") as f:
         pickle.dump((words, labels, training, output), f)
+'''
+words = []
+labels = []
+docs_x = []
+docs_y = []
+
+for intent in data["intents"]:
+    for pattern in intent["patterns"]:
+        wrds = nltk.word_tokenize(pattern)
+        words.extend(wrds)
+        docs_x.append(wrds)
+        docs_y.append(intent["tag"])
+
+    if intent["tag"] not in labels:
+        labels.append(intent["tag"])
+
+words = [stemmer.stem(w.lower()) for w in words if w != "?"]
+words = sorted(list(set(words)))
+
+labels = sorted(labels)
+
+training = []
+output = []
+
+out_empty = [0 for _ in range(len(labels))]
+
+for x, doc in enumerate(docs_x):
+    bag = []
+
+    wrds = [stemmer.stem(w.lower()) for w in doc]
+
+    for w in words:
+        if w in wrds:
+            bag.append(1)
+        else:
+            bag.append(0)
+
+    output_row = out_empty[:]
+    output_row[labels.index(docs_y[x])] = 1
+
+    training.append(bag)
+    output.append(output_row)
+
+training = numpy.array(training)
+output = numpy.array(output)
+
+with open("data.pickle", "wb") as f:
+    pickle.dump((words, labels, training, output), f)
 
 
 net = tflearn.input_data(shape=[None, len(training[0])])
-net = tflearn.fully_connected(net, 10)
-net = tflearn.fully_connected(net, 10)
+net = tflearn.fully_connected(net, 15)
+net = tflearn.fully_connected(net, 15)
 net = tflearn.fully_connected(net, len(output[0]), activation="softmax")
 net = tflearn.regression(net)
 
 model = tflearn.DNN(net)
-
+'''
 try:
     model.load("model.tflearn")
 except:
     model.fit(training, output, n_epoch=2000, batch_size=10, show_metric=True)
     model.save("model.tflearn")
+'''
+model.fit(training, output, n_epoch=2500, batch_size=15, show_metric=True)
+model.save("model.tflearn")
 
 
 def bag_of_words(s, words):
@@ -129,25 +178,25 @@ def chat():
         url = 'https://google.com/search?q=' + voice_data
         webbrowser.get().open(url)
         speak(random.choice(responses))
-    elif tag == 'file':
-        with open('fileTest.txt', 'w') as f:
-            f.write("안녕하세요!")
+    elif tag == 'file':  # 파일 내용추가, 파일 생성, 어떠한 파일
+        file()
+        speak(random.choice(responses))
+    elif tag == 'file_add':
+        file_add()
         speak(random.choice(responses))
     else:
         speak(random.choice(responses))
 
 
 def record_audio():
-
+    r = sr.Recognizer()
     with sr.Microphone() as source:
         audio = r.listen(source)
         voice_data = ''
         try:
             voice_data = r.recognize_google(audio, language="ko-KR")
-        except sr.UnknownValueError:
-            speak("죄송합니다만 다시한번 얘기해주실수 있나요?")
-        except sr.RequestError:
-            speak("현재 서비스가 다운되어있습니다")
+        except Exception as e:
+            speak("Exception: " + str(e))
         return voice_data
 
 
@@ -171,6 +220,24 @@ def speak(audio_string):
         print("Error Code:" + rescode)
 
 
+def file():
+    speak("어떤 파일을 생성해 드릴까요?")
+    file_name = record_audio()
+    speak("어떤 내용을 추가 할까요?")
+    file_content = record_audio()
+    with open(file_name + ".txt",  'w') as f:
+        f.write(file_content)
+
+
+def file_add():
+    speak("무슨 파일에다가 내용을 추가 할까요?")
+    file_name = record_audio()
+    speak("어떤 내용을 추가 하고 싶으신가요?")
+    file_content = record_audio()
+    with open(file_name + ".txt", 'a') as f:
+        f.write("\n" + file_content)
+
+
 print("마이크를 통해 일레이나라고 말하면 일레이나가 대답합니다!")
 
 
@@ -178,7 +245,9 @@ while True:
 
     calling = record_audio()
 
-    if calling.count("일레이나") > 0:
+    if calling.count("하야사카") > 0:
         chat()
     elif calling.count("셧다운") > 0:
         break
+    else:
+        continue
