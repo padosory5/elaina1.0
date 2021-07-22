@@ -30,7 +30,7 @@ With the support from **Naver Clova Premium Voice** product it is able to read o
 more infomration about this API can be explained in here https://api.ncloud-docs.com/docs/en/ai-naver-clovavoice-ttspremium
 
 
-#Functions
+# Functions
 
 - File generate, add_content, type :warning:
 - searching through google :warning:
@@ -41,7 +41,7 @@ more infomration about this API can be explained in here https://api.ncloud-docs
 - time, date, weather :x:
 - message response :x:
 
-:heavy_check_mark: : operating :warning: : working in progress :x: : not operating
+:heavy_check_mark: : fully operating :warning: : working in progress :x: : not operating
 
 There will be further updates on the fucntion.
 
