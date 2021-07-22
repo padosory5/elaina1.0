@@ -32,16 +32,16 @@ more infomration about this API can be explained in here https://api.ncloud-docs
 
 #Functions
 
-- File generate, add_content, type
-- searching through google
-- playing music
-- alarm
-- schedule
-- remote control (ex : Air conditioning, television, curtains)
-- time, date, weather
-- message response
+- File generate, add_content, type :warning:
+- searching through google :warning:
+- playing music :x:
+- alarm :x:
+- schedule :x:
+- remote control (ex : Air conditioning, television, curtains) :x:
+- time, date, weather :x:
+- message response :x:
 
-:heavy_check_mark: : operating :x: : not operating
+:heavy_check_mark: : operating :warning: : working in progress :x: : not operating
 
 There will be further updates on the fucntion.
 
