@@ -16,11 +16,11 @@ import requests
 import socket
 from nltk.stem.lancaster import LancasterStemmer
 
-host, port = "127.0.0.1", 25001
+host, port = "127.0.0.1", 25001  # local host
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect((host, port))
 
-
+# client id for naver voice
 client_id = "6er9p07etq"
 client_secret = "VNMRk9SsZzUOZc9S34ryUNxcs73Fqy4PKRP7wyP1"
 
@@ -198,8 +198,8 @@ def chat():
         unitySend("normal")
 
 
+# sending the correct tag to Unity to play the animation
 def unitySend(motion):
-    # calling the animation
     # Converting string to Byte, and sending it to C#
     sock.sendall(motion.encode("UTF-8"))
     # receiveing data in Byte fron C#, and converting it to String
