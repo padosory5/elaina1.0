@@ -13,12 +13,6 @@ It has functions to help people in their daily lives.
 - Model : Live2d Cubism
 - Environment : python 3.7 Anaconda 4.8
 
-# Steps to start
-(starts under the assumption that the Anaconda GPU environment is set up)
-1. Create an Anaconda environment by conda create -n chatbot python=3.7. (chatbot can be replaced with your own env name) 
-2. 
-
-
 # API
 Google supports **Speech-To-Text** for everyone. Therefore, it can read out the voice and transform it to a text.
 and that text will be sent to speak function.
