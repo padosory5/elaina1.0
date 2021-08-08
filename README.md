@@ -2,6 +2,23 @@
 Elaina is a personal voice assitant bot with an avatar. 
 It has functions to help people in their daily lives.
 
+# Development environment
+- Operating System : Windows 10 64 bit
+- Network Socket : TCP (Transmission Control Protocol)
+- Language : C#, Python
+- Model Algorith : Deep Learning
+- Voice : Naver CLOVA Voice
+- Voice Recognition : Google Voice Search
+- Engine : Unity
+- Model : Live2d Cubism
+- Environment : python 3.7 Anaconda 4.8
+
+# Steps to start
+(starts under the assumption that the Anaconda GPU environment is set up)
+1. Create an Anaconda environment by conda create -n chatbot python=3.7. (chatbot can be replaced with your own env name) 
+2. 
+
+
 # API
 Google supports **Speech-To-Text** for everyone. Therefore, it can read out the voice and transform it to a text.
 and that text will be sent to speak function.
@@ -28,7 +45,6 @@ With the support from **Naver Clova Premium Voice** product it is able to read o
             print("Error Code:" + rescode)
 
 more infomration about this API can be explained in here https://api.ncloud-docs.com/docs/en/ai-naver-clovavoice-ttspremium
-
 
 # Functions
 
