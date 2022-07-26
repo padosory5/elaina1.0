@@ -1,40 +1,33 @@
-import random
-import numpy
-import speech_recognition as sr
-from time import ctime
-import webbrowser
-import os
-import playsound
-import urllib.request
-import pickle
 import json
+import os
+import pickle
+import random
+import socket
+import urllib.request
+import webbrowser
+from time import ctime
+
+import nltk
+import numpy
+import requests
+import speech_recognition as sr
 import tensorflow as tf
 import tflearn
-import numpy
-import nltk
-import requests
-import socket
 from nltk.stem.lancaster import LancasterStemmer
 
 host, port = "127.0.0.1", 25001  # local host
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect((host, port))
 
-# client id for naver voice
-client_id = "6er9p07etq"
-client_secret = "VNMRk9SsZzUOZc9S34ryUNxcs73Fqy4PKRP7wyP1"
-
-
 stemmer = LancasterStemmer()
 
-
-with open("intents.json", 'r', encoding='UTF-8', errors='ignore') as file:
+with open("intents.json", 'r', encoding='UTF-8', errors='ignore') as file: #intents 파일 한국어로 인식가능하게
     data = json.load(file)
 try:
     with open("data.pickle", "rb") as f:
         words, labels, training, output = pickle.load(f)
 except:
-    words = []
+    words = [] #내가 말한 말이 words에 있는지 확인
     labels = []
     docs_x = []
     docs_y = []
@@ -54,21 +47,25 @@ except:
 
     labels = sorted(labels)
 
+    #intents file에 있는 intention tag 들을 [0, 0, 0, 0, 1, 0] 이런식으로
+    #list으로 만들어서 가장 많이 들어온 단어를 intention 으로 알아듣게 하여
+    #그 intention 에 맞게 대답을 할수 있게 만들어야함.
+
     training = []
     output = []
 
     out_empty = [0 for _ in range(len(labels))]
 
     for x, doc in enumerate(docs_x):
-        bag = []
+        bag = [] #bag of words
 
         wrds = [stemmer.stem(w.lower()) for w in doc]
 
-        for w in words:
+        for w in words: #Checking if the word exists
             if w in wrds:
-                bag.append(1)
+                bag.append(1) #A word exists
             else:
-                bag.append(0)
+                bag.append(0)#Word does not exists
 
         output_row = out_empty[:]
         output_row[labels.index(docs_y[x])] = 1
@@ -130,14 +127,16 @@ output = numpy.array(output)
 with open("data.pickle", "wb") as f:
     pickle.dump((words, labels, training, output), f)
 '''
-
+#Model training using nueral network
 net = tflearn.input_data(shape=[None, len(training[0])])
+net = tflearn.fully_connected(net, 15) #hidden layers
 net = tflearn.fully_connected(net, 15)
-net = tflearn.fully_connected(net, 15)
+#shows probabilities of each neuron(tags) of the model
 net = tflearn.fully_connected(net, len(output[0]), activation="softmax")
 net = tflearn.regression(net)
 
 model = tflearn.DNN(net)
+
 try:
     model.load("model.tflearn")
 except:
@@ -163,9 +162,9 @@ def bag_of_words(s, words):
 
 
 def chat():
-    speak("네 부르셨습니까?")
+    print("네 부르셨습니까?")
 
-    voice_data = record_audio("ko-KR")
+    voice_data = record_audio()
 
     print(">", voice_data)
 
@@ -178,23 +177,26 @@ def chat():
             responses = tg['responses']
 
     if tag == 'time':
-        speak("현재 시간은" + ctime() + "입니다!")
+        print("현재 시간은" + ctime() + "입니다!")
         unitySend("time")
     elif tag == 'search':
         url = 'https://google.com/search?q=' + voice_data
         webbrowser.get().open(url)
-        speak(random.choice(responses))
+        print(random.choice(responses))
         unitySend("search")
     elif tag == 'file' or tag == 'file_add':  # 파일 내용추가, 파일 생성, 어떠한 파일
         file(tag)
-        speak(random.choice(responses))
+        print(random.choice(responses))
         unitySend("file")
     elif tag == 'folder':
         folder()
-        speak(random.choice(responses))
+        print(random.choice(responses))
         unitySend("folder")
+    elif tag == 'age':
+        print(random.choice(responses))
+        unitySend("age")
     else:
-        speak(random.choice(responses))
+        print(random.choice(responses))
         unitySend("normal")
 
 
@@ -207,19 +209,17 @@ def unitySend(motion):
     print(receivedData)
 
 
-def record_audio(lang):
+def record_audio():
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        audio = r.listen(source)
-        voice_data = ''
+        audio = r.record(source, duration=3)
+        said = ""
         try:
-            if lang == "ko-KR":
-                voice_data = r.recognize_google(audio, language="ko-KR")
-            elif lang == "en":
-                voice_data = r.recognize_google(audio, language="en")
+            said = r.recognize_google(audio, language="ko-KR")
         except Exception as e:
-            speak("Exception: " + str(e))
-        return voice_data
+            print("Exception: " + str(e))
+
+    return said.lower()
 
 
 def speak(audio_string):
@@ -231,6 +231,7 @@ def speak(audio_string):
     request.add_header("X-NCP-APIGW-API-KEY", client_secret)
     response = urllib.request.urlopen(request, data=data.encode('UTF-8'))
     rescode = response.getcode()
+
     if(rescode == 200):
         print(audio_string)
         response_body = response.read()
@@ -244,28 +245,28 @@ def speak(audio_string):
 
 def file(file_type):
     if file_type == "file":
-        speak("어떤 파일을 생성해 드릴까요?")
-        file_name = record_audio("ko-KR")
-        speak("어떤 내용을 추가 할까요?")
-        file_content = record_audio("ko-KR")
+        print("어떤 파일을 생성해 드릴까요?")
+        file_name = record_audio()
+        print("어떤 내용을 추가 할까요?")
+        file_content = record_audio()
         with open(file_name + ".txt",  'w') as f:
             f.write(file_content)
     elif file_type == "file_add":
-        speak("무슨 파일에다가 내용을 추가 할까요?")
-        file_name = record_audio("ko-KR")
-        speak("어떤 내용을 추가 하고 싶으신가요?")
-        file_content = record_audio("ko-KR")
+        print("무슨 파일에다가 내용을 추가 할까요?")
+        file_name = record_audio()
+        print("어떤 내용을 추가 하고 싶으신가요?")
+        file_content = record_audio()
         with open(file_name + ".txt", 'a') as f:
             f.write("\n" + file_content)
 
 
 def folder():
     while True:
-        speak("폴더 이름을 무엇으로 정하고 싶으신가요?")
-        folder_name = record_audio("ko-KR")
+        print("폴더 이름을 무엇으로 정하고 싶으신가요?")
+        folder_name = record_audio()
         print(">", folder_name)
-        speak("폴더의 경로를 정해주세요")
-        folder_rode = record_audio("ko-KR")
+        print("폴더의 경로를 정해주세요")
+        folder_rode = record_audio()
         print(">", folder_rode)
         if folder_rode == "바탕 화면":
             os.chdir("C:\\Users\\pados\\OneDrive\\바탕 화면")
@@ -279,19 +280,16 @@ def folder():
             os.system(f"explorer D:\\Test\\{folder_name}")
             break
         else:
-            speak("알아듣지 못했습니다. 다시한번 말씀해주시겠습니까?")
+            print("알아듣지 못했습니다. 다시한번 말씀해주시겠습니까?")
 
 
-print("마이크를 통해 일레이나라고 말하면 일레이나가 대답합니다!")
+print("마이크를 통해 레이나라고 말하면 레이나가 대답합니다!")
 
 
 while True:
+    calling = record_audio()
 
-    calling = record_audio("ko-KR")
-
-    if calling.count("하야사카") > 0:
+    if calling.count("레이나") > 0:
         chat()
-    elif calling.count("셧다운") > 0:
+    elif calling.count("종료") > 0:
         break
-    else:
-        continue
