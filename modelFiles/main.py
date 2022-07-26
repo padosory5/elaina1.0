@@ -179,6 +179,18 @@ def chat():
     if tag == 'time':
         print("현재 시간은" + ctime() + "입니다!")
         unitySend("time")
+    elif tag == 'age':
+        print(random.choice(responses))
+        unitySend("age")
+    elif tag == 'greeting':
+        print(random.choice(responses))
+        unitySend("greeting");
+    elif tag == 'name':
+        print(random.choice(responses))
+        unitySend("name");
+    elif tag == 'hobbies':
+        print(random.choice(responses))
+        unitySend("hobbies");
     elif tag == 'search':
         url = 'https://google.com/search?q=' + voice_data
         webbrowser.get().open(url)
@@ -192,9 +204,6 @@ def chat():
         folder()
         print(random.choice(responses))
         unitySend("folder")
-    elif tag == 'age':
-        print(random.choice(responses))
-        unitySend("age")
     else:
         print(random.choice(responses))
         unitySend("normal")
@@ -292,4 +301,5 @@ while True:
     if calling.count("레이나") > 0:
         chat()
     elif calling.count("종료") > 0:
+        print("종료합니다");
         break
