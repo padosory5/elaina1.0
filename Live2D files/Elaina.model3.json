@@ -1,0 +1,23 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "Elaina.moc3",
+		"Textures": [
+			"Elaina.1024/texture_00.png"
+		],
+		"Physics": "Elaina.physics3.json",
+		"DisplayInfo": "Elaina.cdi3.json"
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		},
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": []
+		}
+	]
+}
