@@ -1,22 +1,16 @@
 from openai import OpenAI
+client = OpenAI()
 
-
-client = OpenAI(api_key="...")
-
-
-
-response = client.chat.completions.create(
+completion = client.chat.completions.create(
   model="gpt-3.5-turbo",
   messages=[
-    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."},
+    {"role": "user", "content": "Compose a poem that explains the concept of recursion in programming."}
   ]
 )
 
-print(response)
+print(completion.choices[0].message)
 
 
-'''
-client = "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"
 
-'''
 
